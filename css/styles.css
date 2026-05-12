@@ -3377,7 +3377,7 @@ td:last-child {
 
 .header-menu-toggle span {
     display         : block;
-    background-color: var(--color-white);
+    background-color: black;
     width           : var(--toggle-line-width);
     height          : var(--toggle-line-height);
     margin-top      : -1px;
@@ -3414,13 +3414,13 @@ td:last-child {
 /* is clicked 
  */
 .header-menu-toggle.is-clicked span {
-    background-color: rgba(255, 255, 255, 0);
+    background-color: rgba(0, 0, 0, 0);
     transition      : all 0.1s;
 }
 
 .header-menu-toggle.is-clicked span::before,
 .header-menu-toggle.is-clicked span::after {
-    background-color: var(--color-white);
+    background-color: black;
 }
 
 .header-menu-toggle.is-clicked span::before {
@@ -4986,4 +4986,19 @@ td:last-child {
         font-size  : var(--text-sm);
         line-height: var(--vspace-0_75);
     }
+}
+
+h1, h2, h3, h4, h5, h6, p, .menu-list__item-price {
+    color: black !important;
+}
+body, .menu-list__item, .s-header__block, .header-nav, .footer-newsletter, .s-header.sticky.offset.scrolling{
+    background-color: white !important;
+}
+
+.smoothscroll, .link-list li a, .opening-hours{
+    color: black !important;
+}
+
+.smoothscroll:hover {
+    color: grey !important;
 }
