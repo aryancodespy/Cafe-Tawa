@@ -1,0 +1,23 @@
+name: Website quality checks
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - design/premium-cafe-tawa-2026
+
+permissions:
+  contents: read
+
+jobs:
+  site-audit:
+    name: Check menu, reviews, gallery and site links
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Run regression tests
+        run: node --test tests/site-audit.cjs
