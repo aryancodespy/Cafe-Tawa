@@ -1,111 +1,125 @@
-const { test } = require("node:test");
+const {test} = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
+const root = path.resolve(__dirname,"..");
+const read = p => fs.readFileSync(path.join(root,p),"utf8");
+const pages = Object.fromEntries(["index.html","menu.html","moments.html","reviews.html"].map(p=>[p,read(p)]));
+const menuData = JSON.parse(read("data/menu.json"));
 
-const root = path.resolve(__dirname, "..");
-const read = p => fs.readFileSync(path.join(root, p), "utf8");
-const homepage = read("index.html");
-const moments = read("moments.html");
-
-test("pages use semantic headings and balanced sections", () => {
-  for (const [name, html] of [["index.html", homepage], ["moments.html", moments]]) {
-    assert.equal((html.match(/<h1\b/g) || []).length, 1, name);
-    assert.equal((html.match(/<section\b/g) || []).length, (html.match(/<\/section>/g) || []).length, name);
-    assert.equal((html.match(/<main\b/g) || []).length, 1, name);
-    assert.match(html, /<title>[^<]+<\/title>/);
-    assert.match(html, /<meta name="description"/);
+test("all four pages have semantic structure and metadata",()=>{
+  for(const [page,html] of Object.entries(pages)){
+    assert.equal((html.match(/<h1\b/g)||[]).length,1,page);
+    assert.equal((html.match(/<main\b/g)||[]).length,1,page);
+    assert.equal((html.match(/<section\b/g)||[]).length,(html.match(/<\/section>/g)||[]).length,page);
+    assert.match(html,/<title>[^<]+<\/title>/);
+    assert.match(html,/<meta name="description"/);
+    assert.match(html,/<link rel="canonical"/);
   }
 });
-
-test("IDs are unique and same-page links resolve", () => {
-  for (const [name, html] of [["index.html", homepage], ["moments.html", moments]]) {
-    const ids = Array.from(html.matchAll(/\bid="([^"]+)"/g), m => m[1]);
-    assert.equal(new Set(ids).size, ids.length, name);
-    for (const [, fragment] of html.matchAll(/href="#([^"]+)"/g)) {
-      assert.ok(fragment === "top" || ids.includes(fragment), name + ": #" + fragment);
+test("internal anchors, HTML pages and file references exist",()=>{
+  for(const [file,html] of Object.entries(pages)){
+    const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(x=>x[1]);
+    assert.equal(new Set(ids).size,ids.length,file+" duplicated ID");
+    for(const [,part] of html.matchAll(/(?:src|href)="([^"]+)"/g)){
+      const value=part.replaceAll("&amp;","&").split("?")[0];
+      if(value.startsWith("#")){
+        assert.ok(value==="#top"||ids.includes(value.slice(1)),file+" missing "+value);
+      }else if(/^(?:images|css|js)\/|^favicon\.jpg$/.test(value)){
+        assert.ok(fs.existsSync(path.join(root,decodeURIComponent(value))),file+" missing file "+value);
+      }else if(/^[\w-]+\.html(?:#.*)?$/.test(value)){
+        const [page,fragment]=value.split("#");
+        assert.ok(pages[page],file+" missing page "+page);
+        if(fragment) {
+          const otherIds=[...pages[page].matchAll(/\bid="([^"]+)"/g)].map(x=>x[1]);
+          assert.ok(fragment==="top"||otherIds.includes(fragment),file+" broken link "+value);
+        }
+      }
     }
   }
 });
-
-test("all local referenced assets exist", () => {
-  for (const html of [homepage, moments]) {
-    for (const [, relative] of html.matchAll(/(?:href|src)="((?:images|css|js)\/[^"]+)"/g)) {
-      const asset = decodeURIComponent(relative.split("?")[0]);
-      assert.ok(fs.existsSync(path.join(root, asset)), asset);
-    }
-  }
+test("original colorful Cafe Tawa logo restored on every page",()=>{
+ for(const [page,html] of Object.entries(pages)){
+   assert.match(html,/images\/Summer\.png/,page);
+   assert.doesNotMatch(html,/images\/main%20logo\.png/,page);
+ }
 });
-
-test("preserves all 14 original menu items and prices", () => {
-  const items = [
-    ["Beef Tehari", 450], ["Chicken Biryani", 520], ["Kacchi Biryani", 490],
-    ["Chicken Khichuri", 550], ["Mutton Khichuri", 520],
-    ["Grill Chicken", 300], ["Tandoori Chicken", 370], ["Arabian Kabab", 340],
-    ["Chicken Tikka", 390], ["Beef Chap", 390],
-    ["White Rice", 340], ["Chicken Jhal Fry with Rice", 370],
-    ["Beef Bhuna", 490], ["Fish", 450]
-  ];
-  const actual = Array.from(homepage.matchAll(/<span class="menu-items__name">([^<]+)<\/span><span class="menu-items__price">৳(\d+)<\/span>/g), m => [m[1], Number(m[2])]);
-  assert.deepEqual(actual, items);
-  assert.match(homepage, /Prices and availability can change/);
+test("all 18 listing-sourced items and prices are present",()=>{
+ const all=menuData.categories.flatMap(category=>category.items);
+ assert.equal(all.length,18);
+ const html=pages["menu.html"];
+ for(const item of all){
+   const near=html.slice(html.indexOf("<h3>"+item.name+"</h3>"));
+   assert.ok(near.length>0 && near.length<html.length,"Missing "+item.name);
+   const price=near.match(/<span class="catalog-item__price">([^<]+)<\/span>/)?.[1];
+   assert.equal(price,(item.from?"From ":"")+"৳"+item.price,item.name);
+ }
+ assert.equal(menuData.source_url,"https://food.pathao.com/restaurants/gq2tgoi/cafe-tawa");
+ assert.equal(menuData.checked_on,"2026-10-11");
+ assert.match(html,/prices may differ/i);
 });
-
-test("menu tabs point to accessible existing panels", () => {
-  const controls = Array.from(homepage.matchAll(/role="tab" aria-controls="([^"]+)"/g), m => m[1]);
-  assert.equal(controls.length, 3);
-  for (const panel of controls) {
-    assert.ok(homepage.includes('id="' + panel + '" role="tabpanel"'), panel);
-  }
-  const script = read("js/cafe-tawa.js");
-  assert.match(script, /addEventListener\("keydown"/);
-  assert.match(script, /aria-selected/);
+test("unverified earlier items have no fabricated prices",()=>{
+ const html=pages["menu.html"];
+ assert.equal(menuData.previous_website_unconfirmed.length,10);
+ for(const name of menuData.previous_website_unconfirmed) assert.ok(html.includes("<h3>"+name+"</h3>"),name);
+ assert.equal((html.match(/Price on request/g)||[]).length,10);
+ assert.match(html,/Current availability not verified/);
 });
-
-test("preserves eight original gallery images", () => {
-  const originals = ["gallery-01.jpg", "gallery-02.jpg", "gallery-03.jpg",
-    "gallery-04.jpg", "gallery-05.jpg", "gallery-06.jpg",
-    "130541223_135856751661424_7557791355764471478_n.jpg",
-    "469578017_1083793163534440_3454982807789287247_n.jpg"];
-  const photos = Array.from(moments.matchAll(/class="moments-photo moments-photo--\d+" href="([^"]+)"/g), m => m[1]);
-  assert.equal(photos.length, 8);
-  assert.deepEqual(photos.slice().sort(), originals.map(name => "images/gallery/" + name).sort());
+test("all eight gallery photographs still exist",()=>{
+ const html=pages["moments.html"];
+ const photos=[...html.matchAll(/class="moments-photo moments-photo--\d+" href="([^"]+)"/g)].map(x=>x[1]);
+ assert.equal(photos.length,8);
+ const old=["gallery-01.jpg","gallery-02.jpg","gallery-03.jpg","gallery-04.jpg","gallery-05.jpg","gallery-06.jpg","130541223_135856751661424_7557791355764471478_n.jpg","469578017_1083793163534440_3454982807789287247_n.jpg"];
+ assert.deepEqual(photos.sort(),old.map(name=>"images/gallery/"+name).sort());
 });
-
-test("preserves all four original review names and quotes", () => {
-  const names = ["Shirin Begum", "Tanvir Hossain", "Nusrat Jahan", "Fahim Khan"];
-  const quotations = [
-    "এই ক্যাফেটি খুবই সুন্দর এবং আরামদায়ক। কফির স্বাদ চমৎকার এবং সার্ভিসও খুব ভালো। আবার আসবো অবশ্যই।",
-    "Great ambiance and quality service. Their espresso and desserts are top-notch. Highly recommended for anyone visiting Dhaka.",
-    "The coffee and pastries are fresh and delicious. Perfect place for relaxing and taking photos.",
-    "One of the best coffee shops in Dhaka. The environment is very comfortable and relaxing. Their coffee tastes amazing and the service is very friendly."
-  ];
-  assert.equal((moments.match(/class="guest-quote"/g) || []).length, 4);
-  for (const name of names) assert.ok(moments.includes(name), name);
-  for (const quote of quotations) assert.ok(moments.includes(quote), quote);
+test("all four original guest reviews exist on the dedicated page and homepage",()=>{
+ const quotes=[
+ "এই ক্যাফেটি খুবই সুন্দর এবং আরামদায়ক। কফির স্বাদ চমৎকার এবং সার্ভিসও খুব ভালো। আবার আসবো অবশ্যই।",
+ "Great ambiance and quality service. Their espresso and desserts are top-notch. Highly recommended for anyone visiting Dhaka.",
+ "The coffee and pastries are fresh and delicious. Perfect place for relaxing and taking photos.",
+ "One of the best coffee shops in Dhaka. The environment is very comfortable and relaxing. Their coffee tastes amazing and the service is very friendly."
+ ];
+ for(const name of ["index.html","reviews.html"]){
+   const html=pages[name];
+   assert.equal((html.match(/data-review-slide/g)||[]).length,4,name);
+   for(const quote of quotes) assert.ok(html.includes(quote),name);
+ }
 });
-
-test("all navigation, contact and delivery actions are linked", () => {
-  assert.match(homepage, /href="moments.html"/);
-  assert.match(moments, /href="index.html#menu"/);
-  for (const html of [homepage, moments]) {
-    assert.match(html, /href="tel:\+8801776018825"/);
-    assert.match(html, /href="mailto:admin@cafetawa.com"/);
-  }
-  assert.match(homepage, /food\.pathao\.com\/restaurants\/gq2tgoi\/cafe-tawa/);
-  assert.match(homepage, /google\.com\/maps\/search/);
+test("review sliders autoplay but respect user controls and motion preferences",()=>{
+ const js=read("js/cafe-tawa.js");
+ assert.match(js,/setInterval/);
+ assert.match(js,/5800/);
+ assert.match(js,/prefers-reduced-motion/);
+ assert.match(js,/focusin/);
+ assert.match(js,/mouseenter/);
+ assert.match(js,/visibilitychange/);
+ for(const name of ["index.html","reviews.html"]){
+   const html=pages[name];
+   assert.match(html,/data-review-carousel/);
+   assert.match(html,/data-carousel-prev/);
+   assert.match(html,/data-carousel-next/);
+   assert.match(html,/data-carousel-dots/);
+ }
 });
-
-test("previously listed hours are qualified", () => {
-  assert.match(homepage, /Weekdays 10:00 AM/);
-  assert.match(homepage, /weekends 9:00 AM/);
-  assert.match(homepage, /please call ahead/);
+test("pages expose useful real links without dummy buttons",()=>{
+ for(const [page,html] of Object.entries(pages)){
+   assert.match(html,/tel:\+8801776018825/,page);
+   assert.match(html,/mailto:admin@cafetawa.com/,page);
+ }
+ assert.match(pages["menu.html"],/food\.pathao\.com\/restaurants\/gq2tgoi\/cafe-tawa/);
+ assert.match(pages["index.html"],/google\.com\/maps\/search/);
+ assert.match(pages["index.html"],/href="menu.html"/);
 });
-
-test("responsive CSS and reduced motion rules exist", () => {
-  const css = read("css/cafe-tawa.css");
-  const extended = read("css/cafe-tawa-extras.css");
-  assert.match(css, /@media \(max-width:560px\)/);
-  assert.match(css, /prefers-reduced-motion:reduce/);
-  assert.match(extended, /@media \(max-width:620px\)/);
+test("mobile styling, focus outlines and motion control are present",()=>{
+ const base=read("css/cafe-tawa.css"),refresh=read("css/cafe-tawa-refresh.css");
+ assert.match(base,/@media \(max-width:560px\)/);
+ assert.match(refresh,/@media\(max-width:560px\)/);
+ assert.match(base,/:focus-visible/);
+ assert.match(refresh,/prefers-reduced-motion/);
+});
+test("unnecessary ornamental symbols have been removed",()=>{
+ for(const html of Object.values(pages)) assert.doesNotMatch(html,/✳|✨|🔥|⭐/);
+});
+test("hours remain qualified until confirmed",()=>{
+ assert.match(pages["index.html"],/please call ahead/);
 });
