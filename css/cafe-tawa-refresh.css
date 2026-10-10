@@ -199,3 +199,8 @@ body{background:var(--paper)}
  .menu-section .menu-foot .button{width:100%}
  .review-carousel-section .section-heading{font-size:3.15rem}
 }
+/* Keep the original dark cup lettering readable in the footer */
+.footer__brand>a{display:inline-block;background:#fcf8f1;border-radius:3px;padding:0 .8rem}
+.footer__brand img{margin-left:0;width:240px;height:90px}
+.site-footer .footer__brand p{max-width:310px}
+@media(max-width:560px){.footer__brand img{width:205px;height:78px}}
