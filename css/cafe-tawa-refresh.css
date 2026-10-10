@@ -164,3 +164,38 @@ body{background:var(--paper)}
  .menu-cta__actions{width:100%;flex-direction:column}
 }
 @media(prefers-reduced-motion:reduce){.review-carousel__track,.moments-photo img{transition:none!important}}
+
+/* Homepage menu shortcuts, gallery finishing and keyboard utilities */
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.home-menu-categories{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 3.2rem;margin:3rem 0 1.5rem}
+.home-menu-categories a{display:grid;grid-template-columns:2rem 1fr auto;gap:1.25rem;align-items:center;border-bottom:1px solid rgba(255,244,226,.21);padding:1.5rem 0;transition:color .2s}
+.home-menu-categories a:hover{color:#ffbd90}
+.home-menu-categories span,.home-menu-categories small{font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:#f1b08a}
+.home-menu-categories strong{font-family:var(--serif);font-size:clamp(1.45rem,2.5vw,2.45rem);font-weight:500;letter-spacing:-.035em}
+.home-menu-categories small{color:#c9ad95}
+.menu-section .menu-foot{padding-top:1rem}
+.review-carousel-section>.container>.text-link{margin-top:2rem;color:#9b4936}
+.gallery-review-intro{font-size:1rem;line-height:1.85;max-width:580px;color:var(--muted);margin:1.3rem 0 2.2rem}
+.moments-hero{background:#3a3028}
+.moments-hero .eyebrow{color:#e6b18e}
+.moments-gallery{background:#fffaf4}
+.moments-section__head .eyebrow{color:#ad573d}
+.moments-photo{border-radius:3px}
+.moments-cta{background:#342b22}
+.moments-cta .eyebrow{color:#ffd3b3}
+.moments-cta__actions .button--outline{color:#fff4e7;border-color:#bba392}
+.moments-cta__actions .button--outline:hover{background:#574031}
+.review-carousel__slide:focus{outline:none}
+@media(max-width:820px){
+ .home-menu-categories{gap:0 1.8rem}
+ .home-menu-categories a{gap:.8rem;grid-template-columns:1.2rem 1fr}
+ .home-menu-categories small{display:none}
+}
+@media(max-width:560px){
+ .home-menu-categories{grid-template-columns:1fr;margin-top:2rem}
+ .home-menu-categories a{padding:1.2rem 0;grid-template-columns:1.2rem 1fr auto}
+ .home-menu-categories small{display:block}
+ .home-menu-categories strong{font-size:1.6rem}
+ .menu-section .menu-foot .button{width:100%}
+ .review-carousel-section .section-heading{font-size:3.15rem}
+}
