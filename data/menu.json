@@ -1,0 +1,159 @@
+{
+  "source": "Pathao Food — Cafe Tawa Dhanmondi",
+  "source_url": "https://food.pathao.com/restaurants/gq2tgoi/cafe-tawa",
+  "checked_on": "2026-10-11",
+  "currency": "BDT",
+  "notice": "Prices are listed on Pathao Food and may differ from in-restaurant prices, delivery fees, and promotions. 'From' indicates the lowest displayed option.",
+  "categories": [
+    {
+      "id": "biryani",
+      "name": "Biryani & khichuri",
+      "items": [
+        {
+          "name": "Basmoti Kacchi Biryani (Full)",
+          "price": 515,
+          "details": "With egg",
+          "from": false
+        },
+        {
+          "name": "Basmati Kacchi Biryani (Half)",
+          "price": 263,
+          "details": "Half portion",
+          "from": false
+        },
+        {
+          "name": "Tehari (Beef)",
+          "price": 190,
+          "details": null,
+          "from": false
+        },
+        {
+          "name": "Chicken Biryani",
+          "price": 178,
+          "details": "Half / full sizes available",
+          "from": true
+        },
+        {
+          "name": "Beef Khichuri",
+          "price": 263,
+          "details": null,
+          "from": false
+        }
+      ]
+    },
+    {
+      "id": "grill",
+      "name": "From the grill",
+      "items": [
+        {
+          "name": "Grill Chicken",
+          "price": 115,
+          "details": "Quarter / full sizes available",
+          "from": true
+        },
+        {
+          "name": "Chicken Shawarma",
+          "price": 155,
+          "details": "Served with salad",
+          "from": false
+        }
+      ]
+    },
+    {
+      "id": "naan",
+      "name": "From the tandoor",
+      "items": [
+        {
+          "name": "Butter Naan",
+          "price": 42,
+          "details": null,
+          "from": false
+        },
+        {
+          "name": "Garlic Chili Naan",
+          "price": 63,
+          "details": null,
+          "from": false
+        },
+        {
+          "name": "Garlic Naan",
+          "price": 63,
+          "details": null,
+          "from": false
+        },
+        {
+          "name": "Cafe Tawa Special Naan",
+          "price": 73,
+          "details": null,
+          "from": false
+        },
+        {
+          "name": "Kashmiri Naan Special",
+          "price": 105,
+          "details": null,
+          "from": false
+        }
+      ]
+    },
+    {
+      "id": "drinks",
+      "name": "Coffee & drinks",
+      "items": [
+        {
+          "name": "Black Coffee",
+          "price": 80,
+          "details": null,
+          "from": false
+        },
+        {
+          "name": "Hot Coffee",
+          "price": 120,
+          "details": null,
+          "from": false
+        },
+        {
+          "name": "Borhani (Glass)",
+          "price": 74,
+          "details": null,
+          "from": false
+        },
+        {
+          "name": "Borhani (Half Litre)",
+          "price": 90,
+          "details": null,
+          "from": false
+        },
+        {
+          "name": "Borhani (1 Litre)",
+          "price": 210,
+          "details": null,
+          "from": false
+        }
+      ]
+    },
+    {
+      "id": "sides",
+      "name": "Sides",
+      "items": [
+        {
+          "name": "Mix Vegetables",
+          "price": 25,
+          "details": null,
+          "from": false
+        }
+      ]
+    }
+  ],
+  "previous_website_unconfirmed": [
+    "Chicken Khichuri",
+    "Mutton Khichuri",
+    "Tandoori Chicken",
+    "Arabian Kabab",
+    "Chicken Tikka",
+    "Beef Chap",
+    "White Rice",
+    "Chicken Jhal Fry with Rice",
+    "Beef Bhuna",
+    "Fish"
+  ]
+}
