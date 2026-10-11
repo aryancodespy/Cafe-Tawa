@@ -121,7 +121,7 @@ test("unnecessary ornamental symbols have been removed",()=>{
  for(const html of Object.values(pages)) assert.doesNotMatch(html,/✳|✨|🔥|⭐/);
 });
 test("hours remain qualified until confirmed",()=>{
- assert.match(pages["index.html"],/please call ahead/);
+ assert.match(pages["index.html"],/please call ahead/i);
 });
 
 test("customer-facing copy uses natural wording without source badges",()=>{
