@@ -135,9 +135,9 @@ test("customer-facing copy uses natural wording without source badges",()=>{
 });
 test("all aria-labelledby and menu category references resolve",()=>{
  for(const [page,html] of Object.entries(pages)){
-   const ids=new Set([...html.matchAll(/\\bid="([^"]+)"/g)].map(x=>x[1]));
+   const ids=new Set([...html.matchAll(/\bid="([^"]+)"/g)].map(x=>x[1]));
    for(const [,references] of html.matchAll(/aria-labelledby="([^"]+)"/g)){
-     for(const ref of references.split(/\\s+/)) assert.ok(ids.has(ref),page+" unknown labelledby "+ref);
+     for(const ref of references.split(/\s+/)) assert.ok(ids.has(ref),page+" unknown labelledby "+ref);
    }
  }
 });
