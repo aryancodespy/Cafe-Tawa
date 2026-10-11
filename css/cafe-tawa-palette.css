@@ -122,3 +122,6 @@ a:focus-visible,button:focus-visible{outline-color:#B14B3A}
  .example-review:nth-child(n){grid-column:span 1;min-height:0}
  .example-review blockquote{font-size:1.55rem}
 }
+/* Restrained gallery cue replaces decorative arrow characters. */
+.moments-photo__zoom{width:45px;height:32px;font-family:var(--sans);font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;line-height:1;background:rgba(19,42,61,.75)}
+.moments-photo:hover .moments-photo__zoom,.moments-photo:focus-visible .moments-photo__zoom{background:#173145}
