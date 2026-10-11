@@ -204,3 +204,9 @@ body{background:var(--paper)}
 .footer__brand img{margin-left:0;width:240px;height:90px}
 .site-footer .footer__brand p{max-width:310px}
 @media(max-width:560px){.footer__brand img{width:205px;height:78px}}
+
+/* Quiet, customer-facing menu presentation */
+.catalog-item__bottom{justify-content:flex-end}
+.catalog-item--legacy{background:#fffdf8;border-style:solid;min-height:110px}
+.menu-accuracy--quiet{background:transparent;border-top:1px solid #d9cec0;border-radius:0;padding:1.5rem 0;margin-top:2.5rem}
+.menu-accuracy--quiet p{max-width:550px}
