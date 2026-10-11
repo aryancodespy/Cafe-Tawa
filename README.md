@@ -9,12 +9,12 @@ Site: https://cafetawa.com/
 - `index.html` — welcome, venue photography, featured menu categories, automatically sliding testimonials and contact details.
 - `menu.html` — food and coffee menu with verified delivery-listed prices and clearly separated old menu entries.
 - `moments.html` — all eight images preserved from the older site's gallery.
-- `reviews.html` — all four original customer testimonials presented in an accessible autoplay carousel.
+- `reviews.html` — all four original testimonials in an accessible carousel, plus five visibly labeled fictional sample reviews.
 - `data/menu.json` — editable menu data, price source, original source URL and verification date.
 
 ## Branding
 
-Uses the **original Cafe Tawa logo** from `images/Summer.png`, not the replacement black-and-gold logo. The visual language is warm cream, espresso brown and terracotta to reflect both dining and coffee. The original venue and food photos already in the repo are used as editorial photography; photos do **not** claim to depict every named dish. Avoid copying third-party delivery-listing images without permission.
+Uses the **original Cafe Tawa logo** from `images/Summer.png`, not the replacement black-and-gold logo. The current palette is midnight navy, pearl ivory, pale blue-grey and restrained coral, designed to complement the original red-and-blue logo. The site keeps Fraunces for headings and DM Sans for body copy. The original venue and food photos already in the repo are used as editorial photography; photos do **not** claim to depict every named dish. Avoid copying third-party delivery-listing images without permission.
 
 ## Menu prices and provenance
 
@@ -30,7 +30,13 @@ https://food.pathao.com/restaurants/gq2tgoi/cafe-tawa
 
 ## Guest reviews
 
-The four testimonials are copied verbatim from the older website; their authenticity has **not** been independently verified. The automatically sliding carousel pauses on hover, keyboard focus, when the browser tab is hidden, or when the visitor prefers reduced motion. Visitors can also choose slides manually.
+The four original testimonials are copied verbatim from the older website; their authenticity has **not** been independently verified. Five additional reviews appear only as clearly labeled **fictional writing examples** on the reviews page. They use made-up names and are **not customer endorsements**. Replace them with authentic, permission-cleared customer feedback before claiming them as genuine. The automatically sliding carousel pauses on hover, keyboard focus, when the browser tab is hidden, or when the visitor prefers reduced motion. Visitors can also choose slides manually.
+
+## Design maintenance
+
+- `css/cafe-tawa-palette.css` loads after the original CSS and refresh layers on all four pages. Change the colours there, rather than creating further competing overrides.
+- Keep the existing **Fraunces** and **DM Sans** font declarations unchanged.
+- Decorative emoji and arrow ornaments have been removed, while functional carousel navigation controls are retained.
 
 ## Development
 

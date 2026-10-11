@@ -141,3 +141,32 @@ test("all aria-labelledby and menu category references resolve",()=>{
    }
  }
 });
+
+test("the updated colours apply consistently without changing typography",()=>{
+ const palette=read("css/cafe-tawa-palette.css");
+ const refresh=read("css/cafe-tawa-refresh.css");
+ assert.match(refresh,/--serif:"Fraunces"/);
+ assert.match(refresh,/--sans:"DM Sans"/);
+ assert.doesNotMatch(palette,/--serif:|--sans:|font-family:\s*["'](?:Roboto|Poppins|Inter)/);
+ assert.match(palette,/--night:#162B3E/);
+ assert.match(palette,/--paper:#F8FAF9/);
+ for(const [page,html] of Object.entries(pages)){
+   assert.match(html,/href="css\/cafe-tawa-palette\.css"/,page);
+   assert.match(html,/Fraunces:/,page);
+   assert.match(html,/DM\+Sans:/,page);
+ }
+});
+test("five sample reviews are plainly identified as fictional, never verified guests",()=>{
+ const html=pages["reviews.html"];
+ assert.equal((html.match(/class="example-review"/g)||[]).length,5);
+ assert.equal((html.match(/class="example-review__tag">Fictional example/g)||[]).length,5);
+ assert.match(html,/The five names and comments below are fictional examples, not verified reviews/);
+ const names=["Mim Akter","Raiyan Chowdhury","Nafisa Rahman","Mahin Ahmed","Jannatul Ferdous"];
+ for(const name of names)assert.match(html,new RegExp("Sample name: "+name),name);
+ assert.equal((html.match(/data-review-slide/g)||[]).length,4,"original testimonials must remain distinct");
+});
+test("ornamental emojis and decorative arrow glyphs are absent",()=>{
+ for(const [page,html] of Object.entries(pages)){
+   assert.doesNotMatch(html,/✳|✨|🔥|⭐|☕|🍽|↗|↑/,page);
+ }
+});
