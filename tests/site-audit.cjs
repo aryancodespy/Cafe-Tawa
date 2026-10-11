@@ -56,14 +56,14 @@ test("all 18 listing-sourced items and prices are present",()=>{
  }
  assert.equal(menuData.source_url,"https://food.pathao.com/restaurants/gq2tgoi/cafe-tawa");
  assert.equal(menuData.checked_on,"2026-10-11");
- assert.match(html,/prices may differ/i);
+ assert.match(html,/may differ in the restaurant/i);
 });
 test("unverified earlier items have no fabricated prices",()=>{
  const html=pages["menu.html"];
  assert.equal(menuData.previous_website_unconfirmed.length,10);
  for(const name of menuData.previous_website_unconfirmed) assert.ok(html.includes("<h3>"+name+"</h3>"),name);
- assert.equal((html.match(/Price on request/g)||[]).length,10);
- assert.match(html,/Current availability not verified/);
+ assert.doesNotMatch(html,/Price on request|Current availability not verified/);
+ assert.match(html,/Please ask our team about availability and prices/);
 });
 test("all eight gallery photographs still exist",()=>{
  const html=pages["moments.html"];
@@ -122,4 +122,22 @@ test("unnecessary ornamental symbols have been removed",()=>{
 });
 test("hours remain qualified until confirmed",()=>{
  assert.match(pages["index.html"],/please call ahead/);
+});
+
+test("customer-facing copy uses natural wording without source badges",()=>{
+ for(const [page,html] of Object.entries(pages)){
+   assert.doesNotMatch(html,/Pathao listed|Previously featured|Previously listed|delivery-listed|testimonials retained from the original|carried over from the original/i,page);
+ }
+ const menu=pages["menu.html"];
+ assert.equal((menu.match(/catalog-item__price/g)||[]).length,18);
+ assert.equal((menu.match(/catalog-item--legacy/g)||[]).length,10);
+ assert.doesNotMatch(menu,/catalog-item__tag/);
+});
+test("all aria-labelledby and menu category references resolve",()=>{
+ for(const [page,html] of Object.entries(pages)){
+   const ids=new Set([...html.matchAll(/\\bid="([^"]+)"/g)].map(x=>x[1]));
+   for(const [,references] of html.matchAll(/aria-labelledby="([^"]+)"/g)){
+     for(const ref of references.split(/\\s+/)) assert.ok(ids.has(ref),page+" unknown labelledby "+ref);
+   }
+ }
 });
